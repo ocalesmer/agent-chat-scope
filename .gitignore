@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.vsix
+.DS_Store
+.env
+.env.*
+.codex/
+.claude/
+coverage/
+*.log

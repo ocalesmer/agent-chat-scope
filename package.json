@@ -1,0 +1,190 @@
+{
+  "name": "agent-chat-scope",
+  "displayName": "Agent Chat Scope",
+  "description": "Keep local Codex and Claude Code conversations scoped to your current project.",
+  "version": "0.1.0",
+  "publisher": "ocalesmer",
+  "author": "Öcal Esmer",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ocalesmer/agent-chat-scope.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ocalesmer/agent-chat-scope/issues"
+  },
+  "engines": {
+    "vscode": "^1.94.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "codex",
+    "claude",
+    "history",
+    "workspace",
+    "project"
+  ],
+  "main": "./src/extension.cjs",
+  "extensionKind": [
+    "workspace"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
+  },
+  "activationEvents": [
+    "onView:agentChatScope.chats"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/check.cjs",
+    "prepackage": "node -e \"require('node:fs').mkdirSync('dist', {recursive:true})\"",
+    "package": "vsce package --out dist/agent-chat-scope-0.1.0.vsix"
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "agentChatScope",
+          "title": "Agent Chats",
+          "icon": "media/chats.svg"
+        }
+      ]
+    },
+    "views": {
+      "agentChatScope": [
+        {
+          "id": "agentChatScope.chats",
+          "name": "Project Chats"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "agentChatScope.refresh",
+        "title": "Agent Chats: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "agentChatScope.changeScope",
+        "title": "Agent Chats: Choose Project Scope",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "agentChatScope.search",
+        "title": "Agent Chats: Search Titles",
+        "icon": "$(search)"
+      },
+      {
+        "command": "agentChatScope.resume",
+        "title": "Agent Chats: Resume in Terminal"
+      },
+      {
+        "command": "agentChatScope.copyResume",
+        "title": "Agent Chats: Copy Resume Command",
+        "icon": "$(copy)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "agentChatScope.changeScope",
+          "when": "view == agentChatScope.chats",
+          "group": "navigation@1"
+        },
+        {
+          "command": "agentChatScope.search",
+          "when": "view == agentChatScope.chats",
+          "group": "navigation@2"
+        },
+        {
+          "command": "agentChatScope.refresh",
+          "when": "view == agentChatScope.chats",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "agentChatScope.copyResume",
+          "when": "view == agentChatScope.chats && viewItem == agentChatScope.session",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Agent Chat Scope",
+      "properties": {
+        "agentChatScope.scope": {
+          "type": "string",
+          "enum": [
+            "workspace",
+            "all"
+          ],
+          "enumDescriptions": [
+            "Only conversations in open workspace folders.",
+            "Conversations from all local projects."
+          ],
+          "default": "workspace",
+          "scope": "window",
+          "description": "Project scope for the Agent Chats panel."
+        },
+        "agentChatScope.includeSubfolders": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include conversations started in subfolders of open workspace folders."
+        },
+        "agentChatScope.providers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "codex",
+              "claude"
+            ]
+          },
+          "uniqueItems": true,
+          "default": [
+            "codex",
+            "claude"
+          ],
+          "description": "Local conversation providers to display."
+        },
+        "agentChatScope.codexHome": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Codex data directory. Empty uses CODEX_HOME or ~/.codex."
+        },
+        "agentChatScope.claudeHome": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Claude Code data directory. Empty uses CLAUDE_CONFIG_DIR or ~/.claude."
+        },
+        "agentChatScope.codexExecutable": {
+          "type": "string",
+          "default": "codex",
+          "scope": "machine",
+          "description": "Codex executable name or absolute path used when resuming a conversation."
+        },
+        "agentChatScope.claudeExecutable": {
+          "type": "string",
+          "default": "claude",
+          "scope": "machine",
+          "description": "Claude Code executable name or absolute path used when resuming a conversation."
+        }
+      }
+    }
+  },
+  "devDependencies": {
+    "@vscode/vsce": "4.0.0"
+  }
+}
