@@ -2,7 +2,7 @@
   "name": "agent-chat-scope",
   "displayName": "Agent Chat Scope",
   "description": "Keep local Codex and Claude Code conversations scoped to your current project.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "ocalesmer",
   "author": "Öcal Esmer",
   "license": "MIT",
@@ -47,7 +47,7 @@
     "test": "node --test",
     "check": "node scripts/check.cjs",
     "prepackage": "node -e \"require('node:fs').mkdirSync('dist', {recursive:true})\"",
-    "package": "vsce package --out dist/agent-chat-scope-0.1.0.vsix"
+    "package": "vsce package --out dist/agent-chat-scope-0.1.1.vsix"
   },
   "contributes": {
     "viewsContainers": {
@@ -68,6 +68,10 @@
       ]
     },
     "commands": [
+      {
+        "command": "agentChatScope.open",
+        "title": "Agent Chats: Open Conversation"
+      },
       {
         "command": "agentChatScope.refresh",
         "title": "Agent Chats: Refresh",
@@ -112,6 +116,11 @@
         }
       ],
       "view/item/context": [
+        {
+          "command": "agentChatScope.resume",
+          "when": "view == agentChatScope.chats && viewItem == agentChatScope.session",
+          "group": "navigation@1"
+        },
         {
           "command": "agentChatScope.copyResume",
           "when": "view == agentChatScope.chats && viewItem == agentChatScope.session",

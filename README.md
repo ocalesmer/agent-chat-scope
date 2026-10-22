@@ -12,7 +12,8 @@ Early preview · MIT license · No runtime dependencies · No telemetry
 - Defaults to the current workspace, including multiple open folders and their subfolders.
 - Uses the recorded working directory to determine project membership. Similar folder names do not match accidentally.
 - Provides an explicit **Current workspace / All projects** filter and a title search.
-- Resumes a selected conversation in its original directory using the provider's CLI.
+- Opens a selected Codex conversation in the Codex sidebar. Claude Code conversations resume through its CLI.
+- Keeps **Resume in Terminal** available from a conversation's context menu.
 - Reads existing local metadata without editing, moving, archiving, or deleting conversation files.
 
 This is a separate sidebar. Codex's and Claude Code's built-in history panels keep their existing behavior. No vendor extension is modified. Cloud-only conversations, desktop-app-only histories, and history on another machine are outside this preview's scope.
@@ -32,16 +33,17 @@ npm run check
 npm run package
 ```
 
-The package is written to `dist/agent-chat-scope-0.1.0.vsix`. For development, open this folder in VS Code and press **F5** to launch the Extension Development Host. The extension itself needs no npm packages at runtime.
+The package is written to `dist/agent-chat-scope-0.1.1.vsix`. For development, open this folder in VS Code and press **F5** to launch the Extension Development Host. The extension itself needs no npm packages at runtime.
 
 ## Use
 
 1. Open a project folder or a multi-root workspace.
 2. Open **Agent Chats**. Only conversations recorded in those project folders appear by default.
 3. Use the funnel icon to choose **All projects**, the search icon to search titles, or **Refresh** after a conversation starts or changes.
-4. Click a conversation to resume it in a dedicated integrated terminal. Install the matching CLI (`codex` or `claude`) first, or configure its executable path.
+4. Click a Codex conversation to open that conversation in the **Codex** sidebar (the right panel in current VS Code). Install and enable the OpenAI Codex extension (`openai.chatgpt`) first. Claude Code conversations open in a dedicated integrated terminal.
+5. To use the CLI for either provider, right-click a conversation and choose **Agent Chats: Resume in Terminal**. Install the matching CLI (`codex` or `claude`) first, or configure its executable path.
 
-Clicking a conversation starts the provider CLI in its recorded directory. Browsing or refreshing the list does not start either agent. Resume follows the provider's own configuration and permission behavior.
+Codex navigation uses the installed extension's local conversation URI handler. If Codex is unavailable or VS Code cannot open the link, an error offers **Resume in Terminal**. Terminal resume starts the provider CLI in its recorded directory. Browsing or refreshing the list does not start either agent. Resume follows the provider's own configuration and permission behavior.
 
 **No folder open?** Current workspace mode shows an instruction to open a folder. All projects mode is available from the filter menu. Archived Codex conversations and subagent histories are excluded.
 
@@ -65,7 +67,7 @@ All history discovery stays on your machine. The extension sends no network requ
 
 Local history formats are internal and can change. The current adapters recognize Codex `session_meta` records and `session_index.jsonl`, plus Claude Code project JSONL records and optional `sessions-index.json` titles. Unknown records without a valid session ID and absolute working directory are omitted. Missing title metadata produces a provider-and-ID label. This preview does not promise to recover every historical session or show up-to-the-second state. Use Refresh to rescan.
 
-Validation includes synthetic history fixtures for both providers, cross-platform path tests, and extension command tests. The initial live check used local Codex history. Claude Code was not installed on that validation machine; its adapter was tested against synthetic format fixtures. Native UI installation and successful authenticated resume should be checked in your own environment before relying on this preview.
+Validation includes synthetic history fixtures for both providers, cross-platform path tests, and extension command tests, including Codex URI navigation and its failure paths. The sidebar integration was checked against the URI handler and `/local/:conversationId` route in Codex extension 26.1007.21434; these internal routes can change. Automated command tests use a VS Code mock and do not prove that a live Codex webview loaded a conversation. The initial live history check used local Codex history. Claude Code was not installed on that validation machine; its adapter was tested against synthetic format fixtures.
 
 Provider references: [OpenAI projects and chats](https://learn.chatgpt.com/docs/projects), [Claude Code session storage and resume](https://code.claude.com/docs/en/sessions). Claude documents its transcript schema as internal; format-related bug reports should include a **redacted synthetic example**, never a private transcript.
 
@@ -75,7 +77,7 @@ Providers implement `id` and asynchronous `list()`, returning `{ key, provider, 
 
 ## Türkçe
 
-Codex ve Claude Code sohbetlerini açık projeye göre gösteren, MIT lisanslı bir VS Code uzantısıdır. **Agent Chats** paneli varsayılan olarak yalnızca açık çalışma alanının sohbetlerini gösterir. Huni simgesinden **All projects** seçeneğine geçebilirsiniz. Sohbet seçildiğinde ilgili CLI, sohbetin asıl klasöründe açılır. Uzantı mevcut sohbetleri değiştirmez; sağlayıcıların kendi geçmiş panelleri ayrı kalır.
+Codex ve Claude Code sohbetlerini açık projeye göre gösteren, MIT lisanslı bir VS Code uzantısıdır. **Agent Chats** paneli varsayılan olarak yalnızca açık çalışma alanının sohbetlerini gösterir. Huni simgesinden **All projects** seçeneğine geçebilirsiniz. Codex sohbetine tıklayınca seçilen konuşma sağdaki Codex panelinde açılır; OpenAI Codex uzantısının kurulu ve etkin olması gerekir. Claude Code sohbeti terminalde açılır. Her iki sağlayıcı için sağ tık menüsündeki **Resume in Terminal** seçeneği kullanılabilir. Uzantı mevcut sohbetleri değiştirmez; sağlayıcıların kendi geçmiş panelleri ayrı kalır.
 
 ## License
 

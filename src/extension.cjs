@@ -26,7 +26,7 @@ function activate(context) {
       item.tooltip = `${item.description}\n${session.cwd}\n${new Date(session.updatedAt).toLocaleString()}`;
       item.iconPath = new vscode.ThemeIcon('comment-discussion');
       item.contextValue = 'agentChatScope.session';
-      item.command = { command: 'agentChatScope.resume', title: 'Resume in Terminal', arguments: [session] };
+      item.command = { command: 'agentChatScope.open', title: 'Open Conversation', arguments: [session] };
       return item;
     }
   };
@@ -58,6 +58,23 @@ function activate(context) {
     providers = createProviders({ codexHome: config().get('codexHome'), claudeHome: config().get('claudeHome') });
     return refresh();
   }
+  async function open(session) {
+    const selected = sessions.find(item => item.key === session?.key);
+    if (!selected) return;
+    if (selected.provider !== 'codex') return resume(selected);
+    try {
+      const extension = vscode.extensions.getExtension('openai.chatgpt');
+      if (!extension) throw new Error('Install and enable the OpenAI Codex extension to open this conversation in the Codex sidebar.');
+      if (!extension.isActive) await extension.activate();
+      // Codex's URI handler focuses its sidebar and queues /local/:id navigation
+      // until the webview is ready. Opening the sidebar command alone loses the ID.
+      const uri = vscode.Uri.from({ scheme: vscode.env.uriScheme, authority: 'openai.chatgpt', path: `/local/${selected.id}` });
+      if (!await vscode.env.openExternal(uri)) throw new Error('VS Code could not open the Codex conversation link.');
+    } catch (error) {
+      const action = await vscode.window.showErrorMessage(`Could not open this conversation in Codex: ${error.message}`, 'Resume in Terminal');
+      if (action === 'Resume in Terminal') await resume(selected);
+    }
+  }
   async function resume(session) {
     // Only entries actually supplied by a local provider may be resumed.
     const selected = sessions.find(item => item.key === session?.key);
@@ -78,6 +95,7 @@ function activate(context) {
   context.subscriptions.push(changed, view,
     { dispose() { disposed = true; generation++; } },
     vscode.commands.registerCommand('agentChatScope.refresh', refresh),
+    vscode.commands.registerCommand('agentChatScope.open', open),
     vscode.commands.registerCommand('agentChatScope.resume', resume),
     vscode.commands.registerCommand('agentChatScope.copyResume', async session => {
       const selected = sessions.find(item => item.key === session?.key);

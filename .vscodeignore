@@ -6,6 +6,7 @@ scripts/**
 node_modules/**
 dist/**
 *.vsix
+*.log
 package-lock.json
 .gitignore
 CONTRIBUTING.md
