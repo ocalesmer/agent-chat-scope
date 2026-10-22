@@ -6,6 +6,12 @@ An open-source VS Code extension that brings local **Codex** and **Claude Code**
 
 Early preview · MIT license · No runtime dependencies · No telemetry
 
+## See it in action
+
+![Illustrated demo: filter local Codex and Claude Code history by workspace, switch projects, and resume a Codex conversation](media/demo.gif)
+
+*10-second illustrated walkthrough with fictional conversations; not a live screen recording. Codex opens in its sidebar; Claude Code resumes in the terminal.*
+
 ## What it does
 
 - Shows Codex and Claude Code conversations in the **Agent Chats** Activity Bar view.
